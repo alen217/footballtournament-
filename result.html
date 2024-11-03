@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Details</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="main3">
+        <div class="navbar">
+            <div class="icon">
+                <h2 class="logo">
+                    <img src="logo.png" height="100px" width="auto">
+                </h2>
+            </div>
+            <div class="menu">
+                <ul>
+                    <li><a href="index.html">HOME</a></li>
+                    <li><a href="player.html">PLAYER</a></li>
+                    <li><a href="team.html">TEAM</a></li>
+                    <li><a href="result.html">RESULT</a></li>
+                    <li><a href="about.html">ABOUT</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="content">
+            <div class="form1">
+                <h1>Search Match Result</h1>
+                <form id="resultForm">
+                    <label for="match_id">Enter Match ID:</label>
+                    <input type="text" id="match_id" name="match_id" required>
+                    <button class="btn1" type="submit">Search</button>
+                </form>
+        
+                <div id="resultDetails" style="margin-top: 20px;">
+                    <h2>Match Result Information</h2>
+                    <p><strong>Team 1 Score:</strong> <span id="team1_score"></span></p>
+                    <p><strong>Team 2 Score:</strong> <span id="team2_score"></span></p>
+                    <p><strong>Winner Team ID:</strong> <span id="winner_team_id"></span></p>
+                </div>
+            </div>
+        
+            <script>
+                $(document).ready(function() 
+                {
+                    $('#resultForm').on('submit', function(e) 
+                    {
+                        e.preventDefault();
+        
+                        const match_id = $('#match_id').val();
+        
+                        $.ajax
+                        ({
+                            url: 'getResult.php', 
+                            method: 'POST',
+                            data: { match_id: match_id },
+                            dataType: 'json',
+                            success: function(response) 
+                            {
+                                if (response.error) 
+                                {
+                                    alert(response.error);
+                                    $('#resultDetails span').text(''); 
+                                } 
+                                else 
+                                {
+                                    $('#team1_score').text(response.team1_score);
+                                    $('#team2_score').text(response.team2_score);
+                                    $('#winner_team_id').text(response.winner_team_id);
+                                }
+                            }
+                        });
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Details</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="main1">
+        <div class="navbar">
+            <div class="icon">
+                <h2 class="logo">
+                    <img src="logo.png" height="100px" width="auto">
+                </h2>
+            </div>
+            <div class="menu">
+                <ul>
+                    <li><a href="index.html">HOME</a></li>
+                    <li><a href="player.html">PLAYER</a></li>
+                    <li><a href="team.html">TEAM</a></li>
+                    <li><a href="result.html">RESULT</a></li>
+                    <li><a href="about.html">ABOUT</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="content">
+            <div class="form1">
+                <h1>Search Player</h1>
+                <form id="playerForm">
+                    <label for="player_id">Enter Player ID:</label>
+                    <input type="text" id="player_id" name="player_id" required>
+                    <button class="btn1" type="submit">Search</button>
+                </form>
+        
+                <div id="playerDetails" style="margin-top: 20px;">
+                    <h2>Player Information</h2>
+                    <p><strong>Name:</strong> <span id="player_name"></span></p>
+                    <p><strong>Team:</strong> <span id="team_name"></span></p>
+                    <p><strong>Age:</strong> <span id="age"></span></p>
+                    <p><strong>Position:</strong> <span id="position"></span></p>
+                </div>
+            </div>
+            <script>
+                $(document).ready(function() 
+                {
+                    $('#playerForm').on('submit', function(e) 
+                    {
+                        e.preventDefault();
+        
+                        const player_id = $('#player_id').val();
+        
+                        $.ajax
+                        ({
+                            url: 'getPlayer.php', 
+                            method: 'POST',
+                            data: { player_id: player_id },
+                            dataType: 'json',
+                            success: function(response) {
+                                if (response.error) 
+                                {
+                                    alert(response.error);
+                                    $('#playerDetails span').text('');  
+                                } 
+                                else 
+                                {
+                                    $('#player_name').text(response.player_name);
+                                    $('#team_name').text(response.team_name);
+                                    $('#age').text(response.age);
+                                    $('#position').text(response.position);
+                                }
+                            }
+                        });
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</body>
+</html>

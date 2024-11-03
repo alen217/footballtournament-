@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Match Result</title>
+    <link rel="stylesheet" href="style.css"> 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="main1">
+        <div class="navbar">
+            <div class="icon">
+                <h2 class="logo">
+                    <img src="logo.png" height="100px" width="auto">
+                </h2>
+            </div>
+             <div class="menu">
+                <ul>
+                    <li><a href="index.html">HOME</a></li>
+                    <li><a href="player.html">PLAYER</a></li>
+                    <li><a href="team.html">TEAM</a></li>
+                    <li><a href="result.html">RESULT</a></li>
+                    <li><a href="about.html">ABOUT</a></li>
+                </ul>
+            </div>
+        </div>
+
+    <div class="content">
+            <h1>Add Match Result</h1>
+            <div class="form-container">
+                <div class="form-left">
+                    <h2>Match Information</h2>
+                    <form id="matchInfoForm">
+                        <label for="match_id">Match ID:</label>
+                        <input type="text" id="match_id" name="match_id" required placeholder="Enter Match ID">
+                        <button type="button" class="btn1" onclick="showTeams()">Show Teams</button><br>
+                        <label for="team1_name">Team 1 Name:</label>
+                        <input type="text" id="team1_name" name="team1_name" readonly><br>
+                        <label for="team2_name">Team 2 Name:</label>
+                        <input type="text" id="team2_name" name="team2_name" readonly><br>
+                    </form>
+                </div>
+                <div class="form-right">
+                    <h2>Enter Result</h2>
+                    <form id="scoreForm">
+                        <label for="score_match_id">Match ID:</label>
+                        <input type="text" id="score_match_id" name="score_match_id" required placeholder="Match ID"><br>
+                        <label for="team1_score">Team1 Score:</label>
+                        <input type="number" id="team1_score" name="team1_score" required placeholder="Team 1 Score"><br>
+                        <label for="team2_score">Team2 Score:</label>
+                        <input type="number" id="team2_score" name="team2_score" required placeholder="Team 2 Score"><br>
+                        <label for="winner_team_id">Winner Team:</label>
+                        <input type="text" id="winner_team_id" name="winner_team_id" required placeholder="Winner Team ID"><br>
+                        <button class="btn1" type="submit">Submit Result</button>
+                    </form>
+                    <div id="resultMessage"></div> 
+                </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('#scoreForm').on('submit', function(e) {
+                e.preventDefault(); 
+
+                // Gather form data
+                var formData = {
+                    score_match_id: $('#score_match_id').val(),
+                    team1_score: $('#team1_score').val(),
+                    team2_score: $('#team2_score').val(),
+                    winner_team_id: $('#winner_team_id').val()
+                };
+
+                $.ajax({
+                    url: 'add_score.php',
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        $('#resultMessage').html(response); // Display the response from the PHP file
+                        $('#scoreForm')[0].reset(); // Reset the form after successful submission
+                    },
+                    error: function() {
+                        $('#resultMessage').text('Error adding match result.');
+                    }
+                });
+            });
+        });
+
+        function showTeams() {
+            const matchId = $('#match_id').val();
+            if (matchId) {
+                $.ajax({
+                    url: 'fetch_teams.php', 
+                    method: 'POST',
+                    data: { match_id: matchId },
+                    success: function(response) {
+                        const result = JSON.parse(response);
+                        if (result.success) {
+                            $('#team1_name').val(result.team1_name);
+                            $('#team2_name').val(result.team2_name);
+                        } else {
+                            alert('No teams found for the entered Match ID');
+                        }
+                    },
+                    error: function() {
+                        alert('Error fetching teams.');
+                    }
+                });
+            } else {
+                alert('Please enter a Match ID first.');
+            }
+        }
+    </script>
+</body>
+</html>
